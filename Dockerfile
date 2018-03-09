@@ -26,7 +26,15 @@ RUN export uid=1000 gid=1000 && \
 # Add developer user to the dialout group to be ale to write the serial USB device
 RUN sed "s/^dialout.*/&developer/" /etc/group -i
 
+# Add golang and simple proxy written in go to proxy mos ui out of the container 
+# (because mos binds to 127.0.0.1:1992 and there is no way to configure it to allow external connections)
+# Also add some useful tools like git and nano to the image
+RUN apt -y update && apt -y install golang-go nano cu && apt clean
+COPY proxy.go /home/developer
+# inside the container, start the proxy with something like this: go run proxy.go &
+
 USER developer
 RUN sudo curl -fsSL https://mongoose-os.com/downloads/mos/install.sh | /bin/sh    
 ENV PATH="${HOME}/.mos/bin/:${PATH}"
-EXPOSE 1992
+EXPOSE 9992
+

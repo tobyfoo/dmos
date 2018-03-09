@@ -27,7 +27,7 @@ This repository contains the [`dmos.sh`](dmos.sh) bash script, that you can use 
         --rm \
         --privileged \
         -e DISPLAY=$DISPLAY \
-        -p 1992:1992 \
+        -p 9992:9992 \
         -v /tmp/.X11-unix:/tmp/.X11-unix \
         -v $SERIAL_PORT:$SERIAL_PORT \
         -v $PROJECTS:/home/developer/projects \
@@ -40,7 +40,7 @@ First time you should execute the following steps:
 
 1. Copy the `dmos.sh` script somewhere in your `$PATH` (`$HOME/bin/` for example).
 2. Set the volume references to your project and sandbox folders, as you can see in the code example above.
-3. Also set the serial port you are using when communicate via the USB cable.
+3. Also set the serial port you are using when communicate via the USB cable. Ensure the serial device (e.g. /dev/ttypUSB0) has permissions to access by either your user or (better) the dialout group.
 
 In order to start the container, execute the `dmos.sh` script.
 It starts a container named `dmos`. You can exit from the session simply by pressing Ctrl-D.
@@ -56,9 +56,28 @@ then start the container with the `dmos.sh` script and use the `docker exec` com
     docker exec -it dmos bash
 ```
 
+If you want to use the mos web UI on your host system you need to use the proxy provided, 
+```bash
+    go run proxy.go &
+```
+and then start 
+```bash
+    mos ui
+```
+Now you can access http://localhost:9992 on your browser. (The reason for using the proxy is that the mos tool binds to 
+127.0.0.1 and there currently is no way to change this. Perhaps this can be configured in mos one day, then we no longer
+ need the proxy.)
+
+
+
 Read about [how to do the first steps with dmos](mos.md),
 and learn more about the usage of the `mos` tool on the [Mongoose-OS](https://mongoose-os.com/) website.
 
+## TODO
+
+- check if /dev/ttyUSB0 allowed to be accessed by user (on my host system, ttyUSB0 was root:root so had to change to root:dialout there)
+- TODO: allow container to run in detatched mode instead of bash only, i.e. start proxy and mos
+- finish documentation
 
 ## References
 
