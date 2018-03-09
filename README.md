@@ -27,21 +27,20 @@ current directory's mos-workspace directory.
   # Starts the Mongoose-OS utils using the docker image.
   
   SERIAL_PORT=/dev/ttyUSB0    # Define the serial port you are willing to use
+  
   MOS_HOME=$PWD/dmos-workspace
-  if [ ! -d "MOS_HOME" ]; then
+  if [ ! -d "$MOS_HOME" ]; then
   echo "Workspace directory MOS_HOME does not exist!"
   exit 1
   fi
-  
-  
-  
+    
   docker run \
     -it \
     --rm \
     --privileged \
     -p 9992:9992 \
     -v $SERIAL_PORT:$SERIAL_PORT \
-    -v $MOS_HOME:/home/developer/.mos \
+    -v $MOS_HOME:/home/developer/dmos-workspace \
     --name dmos \
     tobyfoo/dmos:latest \
     /bin/bash
