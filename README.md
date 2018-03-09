@@ -75,8 +75,10 @@ and learn more about the usage of the `mos` tool on the [Mongoose-OS](https://mo
 
 ## TODO
 
-- check if /dev/ttyUSB0 allowed to be accessed by user (on my host system, ttyUSB0 was root:root so had to change to root:dialout there)
+- TODO: check if /dev/ttyUSB0 allowed to be accessed by user (on my host system, ttyUSB0 was root:root so had to change to root:dialout there)
 - TODO: allow container to run in detatched mode instead of bash only, i.e. start proxy and mos
+- TODO: go build proxy then no need for golang-go and all of these packages...
+- TODO: check if --privileged is really needed
 - finish documentation
 
 ## References
