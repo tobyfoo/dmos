@@ -1,7 +1,9 @@
 FROM ubuntu:16.04
 
+
+# LABEL maintainer="tombenke@gmail.com"
+LABEL respository="https://github.com/tobyfoo/dmos"
 # TODO: for pull request change this back to LABEL respository "https://github.com/tombenke/dmos"
-LABEL respository "https://github.com/tobyfoo/dmos"
 
 ENV HOME /home/developer
 ENV MOS_PORT /dev/ttyUSB0
