@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
-LABEL maintainer "tombenke@gmail.com"
-LABEL respository "https://github.com/tombenke/dmos"
+# TODO: for pull request change this back to LABEL respository "https://github.com/tombenke/dmos"
+LABEL respository "https://github.com/tobyfoo/dmos"
 
 ENV HOME /home/developer
 ENV MOS_PORT /dev/ttyUSB0
@@ -17,9 +17,12 @@ RUN export uid=1000 gid=1000 && \
     chmod 0440 /etc/sudoers.d/developer && \
     chown ${uid}:${gid} -R /home/developer && \
     apt-get update && \
-	apt-get install -y \
-		curl \
-        sudo \
+    apt-get install -y \
+    curl \
+    sudo \
+    git \
+    cu \
+    nano \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -29,7 +32,7 @@ RUN sed "s/^dialout.*/&developer/" /etc/group -i
 # Add golang and simple proxy written in go to proxy mos ui out of the container 
 # (because mos binds to 127.0.0.1:1992 and there is no way to configure it to allow external connections)
 # Also add some useful tools like git and nano to the image
-RUN apt -y update && apt -y install golang-go nano cu && apt clean
+RUN apt -y update && apt -y install golang-go && apt clean
 COPY proxy.go /home/developer
 # inside the container, start the proxy with something like this: go run proxy.go &
 

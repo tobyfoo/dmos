@@ -12,45 +12,49 @@ At the same time you can keep your projects on your disk, that the docker contai
 
 ## Use the container
 
-This repository contains the [`dmos.sh`](dmos.sh) bash script, that you can use to start the `mos` tool.
+First you need to build the image yourself because I'm not pushing it to Docker Hub.
+```bash
+  git clone https://github.com/tobyfoo/dmos
+  cd dmos
+  docker build -t tobyfoo/dmos .
+```  
+
+Here is a useful script to start a container with sensible options. The container's .mos directory is mounted to the 
+current directory's mos-workspace directory.
 
 ```bash
-    #!/bin/bash
-    # Starts the Mongoose-OS utils using the docker image.
-
-    PROJECTS=$HOME/topics       # Set the base path to your topics/projects directory
-    SANDBOX=$HOME/sandbox/mos   # Set the base path to your sandbox directory
-    SERIAL_PORT=/dev/ttyUSB0    # Define the serial port you are willing to use
-
-    docker run \
-        -it \
-        --rm \
-        --privileged \
-        -e DISPLAY=$DISPLAY \
-        -p 9992:9992 \
-        -v /tmp/.X11-unix:/tmp/.X11-unix \
-        -v $SERIAL_PORT:$SERIAL_PORT \
-        -v $PROJECTS:/home/developer/projects \
-        -v $SANDBOX:/home/developer/sandbox \
-        tombenke/dmos:latest \
-        /bin/bash
+  #!/bin/bash
+  # Starts the Mongoose-OS utils using the docker image.
+  
+  SERIAL_PORT=/dev/ttyUSB0    # Define the serial port you are willing to use
+  MOS_HOME=$PWD/dmos-workspace
+  if [ ! -d "MOS_HOME" ]; then
+  echo "Workspace directory MOS_HOME does not exist!"
+  exit 1
+  fi
+  
+  
+  
+  docker run \
+    -it \
+    --rm \
+    --privileged \
+    -p 9992:9992 \
+    -v $SERIAL_PORT:$SERIAL_PORT \
+    -v $MOS_HOME:/home/developer/.mos \
+    --name dmos \
+    tobyfoo/dmos:latest \
+    /bin/bash
 ```
 
-First time you should execute the following steps:
-
-1. Copy the `dmos.sh` script somewhere in your `$PATH` (`$HOME/bin/` for example).
-2. Set the volume references to your project and sandbox folders, as you can see in the code example above.
-3. Also set the serial port you are using when communicate via the USB cable. Ensure the serial device (e.g. /dev/ttypUSB0) has permissions to access by either your user or (better) the dialout group.
-
-In order to start the container, execute the `dmos.sh` script.
-It starts a container named `dmos`. You can exit from the session simply by pressing Ctrl-D.
+Set the serial port you are using when communicate via the USB cable. Ensure the serial device (e.g. /dev/ttypUSB0) has 
+permissions for either your user or (better) the dialout group.
 
 The container will be removed after the session.
-In case you want to make changes, start the container without the `--rm` switch, 
-and execute the `commit` and `push` docker commands.
+In case you want to persist changes, start the container without the `--rm` switch.
 
 If you want to use the tool in several, parallel console sessions, 
-then start the container with the `dmos.sh` script and use the `docker exec` command:
+then start the container and use the `docker exec` command for additional terminals:
 
 ```bash
     docker exec -it dmos bash
@@ -75,6 +79,8 @@ and learn more about the usage of the `mos` tool on the [Mongoose-OS](https://mo
 
 ## TODO
 
+- TODO: mount .mos as a volume instead of /home/developer/projects and .../sandbox. Add this to Dockerfile too.
+- TODO: remode dmos.sh and rather document docker commandlined for creating and starting container.
 - TODO: check if /dev/ttyUSB0 allowed to be accessed by user (on my host system, ttyUSB0 was root:root so had to change to root:dialout there)
 - TODO: allow container to run in detatched mode instead of bash only, i.e. start proxy and mos
 - TODO: go build proxy then no need for golang-go and all of these packages...
